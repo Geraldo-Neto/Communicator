@@ -5,11 +5,9 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
-import neto.lc.geraldo.com.communicator.MainActivity;
 
 public class CommunicatorServiceStarter {
     private static final String TAG = "CommunicatorStarter";
@@ -53,7 +51,6 @@ public class CommunicatorServiceStarter {
     private void startWaiterCallerService(){
         Intent serviceIntent = new Intent(context, CommunicatorService.class);
 
-        Log.e(TAG, "startWaiterCallerService: " + MainActivity.class.getName());
         serviceIntent.putExtra(CommunicatorService.EXTRA_ACTIVITY_CLASS,activityClass.getName());
 
         ContextCompat.startForegroundService(context,serviceIntent);

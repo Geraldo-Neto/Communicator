@@ -16,7 +16,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import neto.lc.geraldo.com.communicator.R;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -84,7 +83,7 @@ public class CommunicatorService extends Service {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Chama garçom")
                 .setContentText("Escutando por chamadas")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .setDefaults(Notification.DEFAULT_ALL)

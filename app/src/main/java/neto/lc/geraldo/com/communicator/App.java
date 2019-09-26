@@ -4,6 +4,7 @@ import android.app.Application;
 
 import neto.lc.geraldo.com.communicatorlib.CommunicatorServiceStarter;
 
+
 public class App extends Application {
     private static final String TAG = "App";
 

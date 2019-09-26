@@ -12,6 +12,7 @@ import neto.lc.geraldo.com.communicatorlib.DeviceDiscoveryListener;
 import neto.lc.geraldo.com.communicatorlib.DeviceMessage;
 import neto.lc.geraldo.com.communicatorlib.OnDeviceMessageListener;
 
+
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
 
