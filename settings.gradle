@@ -1,0 +1,2 @@
+include ':app', ':communicatorlib'
+rootProject.name='Communicator'
