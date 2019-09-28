@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -46,22 +48,28 @@ public class Communicator {
     }
 
     public void addDeviceMessage(DeviceMessage deviceMessage){
-        if(!listening)
+        Log.d(TAG, "addDeviceMessage: " + deviceMessage.getDevice());
+        if(!listening) {
             this.incomingMessageQueue.offer(deviceMessage);
+            Log.e(TAG, "addDeviceMessage: queue" + deviceMessage.getDevice() );
+        }
         else {
-            CallAction callAction = resolveAction(deviceMessage.getMessage());
+            /*CallAction callAction = resolveAction(deviceMessage.getMessage());
             if(callAction==null)
-                return;
-            long callId = resolveId(deviceMessage.getMessage());
+                return;*/
+            //long callId = resolveId(deviceMessage.getMessage());
+            Log.e(TAG, "addDeviceMessage: " + onDeviceMessageListeners.size() );
             for (OnDeviceMessageListener listener : onDeviceMessageListeners) {
                 listener.onDeviceMessage(deviceMessage);
+                Log.e(TAG, "addDeviceMessage: " + deviceMessage.getDevice() );
             }
         }
-        Log.d(TAG, "addDeviceMessage: " + deviceMessage);
+
     }
 
     public void startDiscovery(){
-        nsdHelper = new NsdHelper(context);
+        if(nsdHelper == null)
+            nsdHelper = new NsdHelper(context);
 
         nsdHelper.initDeviceDiscovery(new NsdHelper.OnDeviceFoundListener() {
             @Override
@@ -78,14 +86,45 @@ public class Communicator {
         });
     }
 
+    public void startServiceRegister(){
+        if(nsdHelper == null)
+            nsdHelper = new NsdHelper(context);
+
+        MultiClientTCPServer multiClientTCPServer = new MultiClientTCPServer(5050, new OnClientMessageListener() {
+            @Override
+            public void onClientMessage(String message, Socket socket) {
+                Log.e(TAG, "onClientMessage: " + message);
+                DeviceMessage deviceMessage = new DeviceMessage(getDeviceFromSocket(socket), message);
+                addDeviceMessage(deviceMessage);
+            }
+        }, new MultiClientTCPServer.OnServerStartedListener() {
+            @Override
+            public void onServerStarted(ServerSocket serverSocket) {
+                nsdHelper.setServerIp(Utils.getIpAddress(context));
+                nsdHelper.initializeRegistrationListener();
+                nsdHelper.registerService(5050);
+            }
+        });
+        multiClientTCPServer.start();
+    }
+
+    private Device getDeviceFromSocket(Socket socket) {
+        for (Device device:deviceList){
+            if(device.getIp().equals(socket.getInetAddress().getHostAddress()))
+                return device;
+        }
+        return null;
+    }
+
+
     public void startListening(){
         listening = true;
         while(incomingMessageQueue.size()>0){
             DeviceMessage deviceMessage = incomingMessageQueue.poll();
-            CallAction callAction = resolveAction(deviceMessage.getMessage());
+            /*CallAction callAction = resolveAction(deviceMessage.getMessage());
             if(callAction==null)
                 return;
-            long callId = resolveId(deviceMessage.getMessage());
+            long callId = resolveId(deviceMessage.getMessage());*/
             for (OnDeviceMessageListener listener : onDeviceMessageListeners) {
                 listener.onDeviceMessage(deviceMessage);
             }

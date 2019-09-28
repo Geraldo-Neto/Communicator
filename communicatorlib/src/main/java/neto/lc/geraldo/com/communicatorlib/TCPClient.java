@@ -170,9 +170,12 @@ public class TCPClient {
                         Log.d(TAG, "run: starting client: " + socket.getInetAddress().getHostAddress());
                         while (running){
                             String message = bufferIn.readLine();
-                            //Log.d(TAG, "run: " + message);
-                            if(message==null)
-                                Log.d(TAG, "run: " + "disconnected!!!");
+                            Log.d(TAG, "run: " + message);
+                            if(message==null){
+                                //Log.d(TAG, "run: " + "disconnected!!!");
+                                stop();
+                                start();
+                            }
                             if(message!= null && messageListener!=null){
                                 messageListener.onMessageReceived(message);
                                 //Log.d(TAG, "run: " + message);

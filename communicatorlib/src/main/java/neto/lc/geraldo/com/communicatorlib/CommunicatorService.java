@@ -136,6 +136,8 @@ public class CommunicatorService extends Service {
 
             }
         });
+
+        Communicator.getInstance(getApplicationContext()).startServiceRegister();
     }
 
     private void acquireWakeLock() {

@@ -18,6 +18,11 @@ public class NsdHelper {
     private String SERVICE_TYPE ="_things._tcp"; // "_services._dns-sd._udp";
     private NsdManager.ResolveListener resolveListener;
     private OnDeviceFoundListener onDeviceFoundListener;
+    private String hostAddress = "";
+
+    public void setServerIp(String hostAddress) {
+        this.hostAddress = hostAddress;
+    }
 
     public interface OnDeviceFoundListener {
         void onDeviceFound(Device device);
@@ -63,7 +68,7 @@ public class NsdHelper {
 
     public void registerService(int port) {
         NsdServiceInfo serviceInfo = new NsdServiceInfo();
-        serviceInfo.setServiceName("NsdChat");
+        serviceInfo.setServiceName("pos" + Utils.getDeviceMAC().replace(":",""));
         serviceInfo.setServiceType(SERVICE_TYPE);
         serviceInfo.setPort(port);
 
@@ -74,7 +79,6 @@ public class NsdHelper {
     }
 
     private void initializeDiscoveryListener() {
-
         // Instantiate a new DiscoveryListener
         discoveryListener = new NsdManager.DiscoveryListener() {
 
@@ -89,8 +93,9 @@ public class NsdHelper {
                 // A service was found! Do something with it.
                 Log.d(TAG, "Service discovery success" + service);
                 if (service.getServiceType().contains("things")) {
-                    if (service.getServiceName().equals(serviceName))
-                        return;//same device
+                    /*if (service.getServiceName().equals(serviceName))
+                        return;//same device*/
+                    initializeResolveListener();
                     nsdManager.resolveService(service, resolveListener);
                     Log.d(TAG, "onServiceFound: Resolving service!");
                 }
@@ -138,6 +143,11 @@ public class NsdHelper {
 
                 int port = serviceInfo.getPort();
                 InetAddress host = serviceInfo.getHost();
+                if(host.getHostAddress().equals(hostAddress) || host.getHostAddress().contains("127.0.0.1")){
+                    Log.e(TAG, "onServiceResolved: " + host.getHostAddress() + " | " + Utils.getIpAddress(context) );
+                    return;
+                }
+
                 DeviceType deviceType = DeviceType.getDeviceTypeFromString(serviceInfo.getServiceName());
                 Device device = new Device(deviceType,new TCPClient(host.getHostAddress(),port));
                 onDeviceFoundListener.onDeviceFound(device);
@@ -148,7 +158,6 @@ public class NsdHelper {
 
     public void initDeviceDiscovery(OnDeviceFoundListener deviceFoundListener) {
         this.onDeviceFoundListener = deviceFoundListener;
-        initializeResolveListener();
         initializeDiscoveryListener();
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }

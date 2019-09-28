@@ -90,4 +90,8 @@ public class Device {
     public void sendMessage(String message) {
         tcpClient.sendMessage(message);
     }
+
+    public String getIp() {
+        return tcpClient.getServerIp();
+    }
 }
