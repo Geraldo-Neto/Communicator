@@ -66,9 +66,9 @@ public class NsdHelper {
         };
     }
 
-    public void registerService(int port) {
+    public void registerService(int port, String deviceName) {
         NsdServiceInfo serviceInfo = new NsdServiceInfo();
-        serviceInfo.setServiceName("pos" + Utils.getDeviceMAC().replace(":",""));
+        serviceInfo.setServiceName(deviceName);
         serviceInfo.setServiceType(SERVICE_TYPE);
         serviceInfo.setPort(port);
 

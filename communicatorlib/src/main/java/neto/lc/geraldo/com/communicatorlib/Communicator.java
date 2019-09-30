@@ -22,6 +22,7 @@ public class Communicator {
     private static boolean listening = false;
     public ArrayList<Device> deviceList;
     private NsdHelper nsdHelper;
+    private String deviceName;
 
     public Communicator(Context context) {
         this.context = context;
@@ -36,6 +37,10 @@ public class Communicator {
             instance = new Communicator(context);
         }
         return instance;
+    }
+
+    public void setDeviceName(String deviceName){
+        this.deviceName = deviceName;
     }
 
     public void addDeviceListener(DeviceDiscoveryListener listener){

@@ -11,13 +11,15 @@ import androidx.core.content.ContextCompat;
 
 public class CommunicatorServiceStarter {
     private static final String TAG = "CommunicatorStarter";
+    private String deviceName;
     private Context context;
     private Class activityClass;
 
 
-    public CommunicatorServiceStarter(Context context, Class activityClass){
+    public CommunicatorServiceStarter(Context context, Class activityClass,String deviceName){
         this.context = context;
         this.activityClass = activityClass;
+        this.deviceName = deviceName;
     }
 
 
@@ -48,7 +50,8 @@ public class CommunicatorServiceStarter {
         }
     }
 
-    private void startWaiterCallerService(){
+    private void startService(){
+        Communicator.getInstance(context).setDeviceName(deviceName);
         Intent serviceIntent = new Intent(context, CommunicatorService.class);
 
         serviceIntent.putExtra(CommunicatorService.EXTRA_ACTIVITY_CLASS,activityClass.getName());
@@ -58,8 +61,8 @@ public class CommunicatorServiceStarter {
 
     public void start(){
         if(activityClass!=null && context !=null){
-            startWaiterCallerService();
             createNotificationChannel();
+            startService();
         }
 
     }

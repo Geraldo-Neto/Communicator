@@ -3,6 +3,7 @@ package neto.lc.geraldo.com.communicator;
 import android.app.Application;
 
 import neto.lc.geraldo.com.communicatorlib.CommunicatorServiceStarter;
+import neto.lc.geraldo.com.communicatorlib.Utils;
 
 
 public class App extends Application {
@@ -11,7 +12,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        CommunicatorServiceStarter communicatorServiceStarter = new CommunicatorServiceStarter(getApplicationContext(), MainActivity.class);
+        CommunicatorServiceStarter communicatorServiceStarter =
+                new CommunicatorServiceStarter(getApplicationContext(), MainActivity.class, "pos" + Utils.getDeviceMAC().replace(":",""));
         communicatorServiceStarter.start();
     }
 
