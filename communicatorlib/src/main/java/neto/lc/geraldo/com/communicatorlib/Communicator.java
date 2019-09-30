@@ -118,7 +118,7 @@ public class Communicator {
             public void onServerStarted(ServerSocket serverSocket) {
                 nsdHelper.setServerIp(Utils.getIpAddress(context));
                 nsdHelper.initializeRegistrationListener();
-                nsdHelper.registerService(5050);
+                nsdHelper.registerService(5050,deviceName);
             }
         });
         multiClientTCPServer.start();
