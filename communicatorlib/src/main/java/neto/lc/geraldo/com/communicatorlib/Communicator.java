@@ -82,6 +82,17 @@ public class Communicator {
 
                 Log.e(TAG, "onDeviceFound: NEW " + device);
                 addDevice(device);
+                device.addOnConnectionChangedListener(new OnConnectionChangedListener() {
+                    @Override
+                    public void onConnectionChanged(boolean connected) {
+                        for(DeviceDiscoveryListener listener:deviceDiscoveryListeners){
+                            if(connected)
+                                listener.onDeviceReconnected(device);
+                            else
+                                listener.onDeviceRemoved(device);
+                        }
+                    }
+                });
             }
         });
     }

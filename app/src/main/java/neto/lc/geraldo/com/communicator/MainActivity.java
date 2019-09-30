@@ -10,11 +10,13 @@ import neto.lc.geraldo.com.communicatorlib.Communicator;
 import neto.lc.geraldo.com.communicatorlib.Device;
 import neto.lc.geraldo.com.communicatorlib.DeviceDiscoveryListener;
 import neto.lc.geraldo.com.communicatorlib.DeviceMessage;
+import neto.lc.geraldo.com.communicatorlib.OnConnectionChangedListener;
 import neto.lc.geraldo.com.communicatorlib.OnDeviceMessageListener;
 
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
+    private boolean connected = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +32,52 @@ public class MainActivity extends AppCompatActivity{
         );
         Log.e(TAG, "onCreate: ");
 
-        Communicator communicator = Communicator.getInstance(getApplicationContext());
+        final Communicator communicator = Communicator.getInstance(getApplicationContext());
         communicator.addDeviceListener(new DeviceDiscoveryListener() {
             @Override
-            public void onDeviceFound(Device device) {
+            public void onDeviceFound(final Device device) {
                 Log.e(TAG, "onDeviceFound: " + device);
+                device.addOnConnectionChangedListener(new OnConnectionChangedListener() {
+                    @Override
+                    public void onConnectionChanged(boolean connected) {
+                        if(connected)
+                            device.sendMessage("Reconnected");
+
+                    }
+                });
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int i=0;
+                        while (true){
+                            try {
+                                Thread.sleep(300);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            if(!connected)
+                                continue;
+                            device.sendMessage(String.valueOf(i));
+                            i++;
+
+                        }
+                    }
+                }).start();
+
             }
 
             @Override
             public void onDeviceRemoved(Device device) {
+                Log.e(TAG, "onDeviceRemoved: " );
+                connected = false;
 
             }
 
             @Override
             public void onDeviceReconnected(Device device) {
+                Log.e(TAG, "onDeviceReconnected: " );
+                connected = true;
 
             }
         });
