@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.e(TAG, "onDeviceFound: " + jsonObject.toString());
+                Log.e(TAG,  jsonObject.toString());
 
                 if(device!=null)
                     device.sendMessage(jsonObject.toString());
