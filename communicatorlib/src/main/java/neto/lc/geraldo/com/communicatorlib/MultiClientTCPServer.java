@@ -32,6 +32,7 @@ public class MultiClientTCPServer extends Thread {
 
         try {
             serverSocket = new ServerSocket(this.port);
+            serverSocket.setReuseAddress(true);
         } catch (IOException e) {
             e.printStackTrace();
         }

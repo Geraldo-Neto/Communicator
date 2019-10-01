@@ -6,6 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import neto.lc.geraldo.com.communicator.escpospi.EscPos;
+import neto.lc.geraldo.com.communicator.escpospi.EscPosMessage;
+import neto.lc.geraldo.com.communicator.escpospi.PrinterUtils;
 import neto.lc.geraldo.com.communicatorlib.Communicator;
 import neto.lc.geraldo.com.communicatorlib.Device;
 import neto.lc.geraldo.com.communicatorlib.DeviceDiscoveryListener;
@@ -45,25 +51,28 @@ public class MainActivity extends AppCompatActivity{
 
                     }
                 });
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int i=0;
-                        while (true){
-                            try {
-                                Thread.sleep(300);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
 
-                            if(!connected)
-                                continue;
-                            device.sendMessage(String.valueOf(i));
-                            i++;
+                if(device.getName().contains("prt")){
+                    EscPos printer = new EscPos(getApplicationContext(),new EscPosMessage());
 
-                        }
+                    PrinterUtils.printProduct(printer,"Teste2",9.99,1,1);
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("commands",printer.getEscPosMessage().getMessages());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }).start();
+                    Log.e(TAG, "onDeviceFound: " + jsonObject.toString());
+
+                    device.sendMessage(jsonObject.toString());
+                }
+
+                if(!device.getName().contains("pos")){
+                    return;
+                }
+
+                //testDeviceWifi(device);
+
 
             }
 
@@ -90,6 +99,28 @@ public class MainActivity extends AppCompatActivity{
         });
 
         communicator.startListening();
+    }
+
+    private void testDeviceWifi(final Device device) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int i=0;
+                while (true){
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(!connected)
+                        continue;
+                    device.sendMessage(String.valueOf(i));
+                    i++;
+
+                }
+            }
+        }).start();
     }
 
 }

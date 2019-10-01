@@ -48,7 +48,7 @@ public class Device {
 
     @Override
     public String toString(){
-        return "DeviceType: " + getDeviceType() + " UUID: " + getUUID() + " IP: " + tcpClient.getServerIp();
+        return "Name: " + name + " DeviceType: " + getDeviceType() + " UUID: " + getUUID() + " IP: " + tcpClient.getServerIp();
     }
 
     public void start() {

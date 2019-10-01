@@ -163,6 +163,7 @@ public class TCPClient {
                 try{
                     
                     socket = new Socket(serverIp,serverPort);
+                    socket.setReuseAddress(true);
                     startConnectionStatusChecker();
                     try{
                         bufferIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
