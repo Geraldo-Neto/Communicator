@@ -149,7 +149,7 @@ public class NsdHelper {
                 }
 
                 DeviceType deviceType = DeviceType.getDeviceTypeFromString(serviceInfo.getServiceName());
-                Device device = new Device(deviceType,new TCPClient(host.getHostAddress(),port));
+                Device device = new Device(serviceInfo.getServiceName(),deviceType,new TCPClient(host.getHostAddress(),port));
                 onDeviceFoundListener.onDeviceFound(device);
             }
         };

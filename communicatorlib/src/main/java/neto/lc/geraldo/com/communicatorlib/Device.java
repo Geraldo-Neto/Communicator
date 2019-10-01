@@ -10,9 +10,10 @@ public class Device {
     private ArrayList<OnMessageListener> onMessageListeners =  new ArrayList<>();
     private ArrayList<OnConnectionChangedListener> onConnectionChangedListeners = new ArrayList<>();
 
-    public Device(DeviceType deviceType, TCPClient tcpClient) {
+    public Device(String deviceName, DeviceType deviceType, TCPClient tcpClient) {
         this.deviceType = deviceType;
         this.tcpClient = tcpClient;
+        this.name = deviceName;
     }
 
     public String getName() {
