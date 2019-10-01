@@ -175,7 +175,7 @@ public class TCPClient {
                             if(message==null){
                                 //Log.d(TAG, "run: " + "disconnected!!!");
                                 stop();
-                                start();
+                                //start();
                             }
                             if(message!= null && messageListener!=null){
                                 messageListener.onMessageReceived(message);

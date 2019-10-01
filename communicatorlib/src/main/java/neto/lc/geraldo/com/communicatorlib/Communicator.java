@@ -106,7 +106,7 @@ public class Communicator {
         if(nsdHelper == null)
             nsdHelper = new NsdHelper(context);
 
-        MultiClientTCPServer multiClientTCPServer = new MultiClientTCPServer(5050, new OnClientMessageListener() {
+        MultiClientTCPServer multiClientTCPServer = new MultiClientTCPServer(0, new OnClientMessageListener() {
             @Override
             public void onClientMessage(String message, Socket socket) {
                 Log.e(TAG, "onClientMessage: " + message);

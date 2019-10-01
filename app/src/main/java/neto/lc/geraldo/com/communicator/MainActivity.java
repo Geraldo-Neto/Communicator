@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +25,8 @@ import neto.lc.geraldo.com.communicatorlib.OnDeviceMessageListener;
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
     private boolean connected = true;
+    private Button buttonPrint;
+    private Device printerDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity{
                 });
 
                 if(device.getName().contains("prt")){
-                    printMessage(device);
+                    printerDevice = device;
                 }
 
                 if(!device.getName().contains("pos")){
@@ -88,31 +92,39 @@ public class MainActivity extends AppCompatActivity{
         });
 
         communicator.startListening();
+
+        buttonPrint = findViewById(R.id.buttonPrint);
+        buttonPrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "onClick:" + communicator.deviceList.size() );
+                for(Device device:communicator.deviceList){
+                    if(device.getName().contains("prt"))
+                        printMessage(device);
+                }
+
+            }
+        });
     }
 
     private void printMessage(final Device device) {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    EscPos printer = new EscPos(getApplicationContext(),new EscPosMessage());
+                EscPos printer = new EscPos(getApplicationContext(),new EscPosMessage());
 
-                    PrinterUtils.printProduct(printer,"Teste2",9.99,1,1);
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put("commands",printer.getEscPosMessage().getMessages());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.e(TAG, "onDeviceFound: " + jsonObject.toString());
-
-                    device.sendMessage(jsonObject.toString());
+                PrinterUtils.printProduct(printer,"Teste2",9.99,1,1);
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("commands",printer.getEscPosMessage().getMessages());
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                Log.e(TAG, "onDeviceFound: " + jsonObject.toString());
+
+                if(device!=null)
+                    device.sendMessage(jsonObject.toString());
             }
         }).start();
 

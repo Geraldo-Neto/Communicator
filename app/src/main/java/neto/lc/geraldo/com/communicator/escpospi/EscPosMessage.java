@@ -23,7 +23,7 @@ public class EscPosMessage {
 
     public void write(byte[] bytes)  {
         String str = new String(bytes, StandardCharsets.ISO_8859_1);
-        messages = messages + "\n" + str;
+        messages = messages + str;
     }
 
     public void write(int i) {

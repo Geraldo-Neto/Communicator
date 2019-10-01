@@ -76,11 +76,11 @@ public class CommunicatorService extends Service {
             return;
         }
 
-        Intent notificationIntent = new Intent(this, activityClass);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+        Intent notificationIntent = new Intent(getApplicationContext(), activityClass);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
                 0, notificationIntent, 0);
 
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setContentTitle("Chama garçom")
                 .setContentText("Escutando por chamadas")
                 .setSmallIcon(R.drawable.ic_launcher_background)
