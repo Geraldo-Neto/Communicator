@@ -11,15 +11,17 @@ import androidx.core.content.ContextCompat;
 
 public class CommunicatorServiceStarter {
     private static final String TAG = "CommunicatorStarter";
+    private final int servicePort;
     private String deviceName;
     private Context context;
     private Class activityClass;
 
 
-    public CommunicatorServiceStarter(Context context, Class activityClass,String deviceName){
+    public CommunicatorServiceStarter(Context context, Class activityClass,String deviceName,int servicePort){
         this.context = context;
         this.activityClass = activityClass;
         this.deviceName = deviceName;
+        this.servicePort = servicePort;
     }
 
 
@@ -52,6 +54,7 @@ public class CommunicatorServiceStarter {
 
     private void startService(){
         Communicator.getInstance(context).setDeviceName(deviceName);
+        Communicator.getInstance(context).setServicePort(servicePort);
         Intent serviceIntent = new Intent(context, CommunicatorService.class);
 
         serviceIntent.putExtra(CommunicatorService.EXTRA_ACTIVITY_CLASS,activityClass.getName());

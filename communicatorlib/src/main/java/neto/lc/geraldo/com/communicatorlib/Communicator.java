@@ -23,6 +23,7 @@ public class Communicator {
     public ArrayList<Device> deviceList;
     private NsdHelper nsdHelper;
     private String deviceName;
+    private int servicePort;
 
     public Communicator(Context context) {
         this.context = context;
@@ -106,7 +107,7 @@ public class Communicator {
         if(nsdHelper == null)
             nsdHelper = new NsdHelper(context);
 
-        MultiClientTCPServer multiClientTCPServer = new MultiClientTCPServer(0, new OnClientMessageListener() {
+        MultiClientTCPServer multiClientTCPServer = new MultiClientTCPServer(servicePort, new OnClientMessageListener() {
             @Override
             public void onClientMessage(String message, Socket socket) {
                 Log.e(TAG, "onClientMessage: " + message);
@@ -187,5 +188,9 @@ public class Communicator {
         for(DeviceDiscoveryListener listener:deviceDiscoveryListeners){
             listener.onDeviceReconnected(device);
         }
+    }
+
+    public void setServicePort(int servicePort) {
+        this.servicePort = servicePort;
     }
 }
