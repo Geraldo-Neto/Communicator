@@ -49,7 +49,7 @@ public class EchoThread extends Thread {
             inp = socket.getInputStream();
             brinp = new BufferedReader(new InputStreamReader(inp));
             out = new DataOutputStream(socket.getOutputStream());
-            startPinging(out);
+            //startPinging(out);
         } catch (IOException e) {
             return;
         }

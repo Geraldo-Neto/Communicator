@@ -53,18 +53,7 @@ public class MainActivity extends AppCompatActivity{
                 });
 
                 if(device.getName().contains("prt")){
-                    EscPos printer = new EscPos(getApplicationContext(),new EscPosMessage());
-
-                    PrinterUtils.printProduct(printer,"Teste2",9.99,1,1);
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put("commands",printer.getEscPosMessage().getMessages());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.e(TAG, "onDeviceFound: " + jsonObject.toString());
-
-                    device.sendMessage(jsonObject.toString());
+                    printMessage(device);
                 }
 
                 if(!device.getName().contains("pos")){
@@ -99,6 +88,34 @@ public class MainActivity extends AppCompatActivity{
         });
 
         communicator.startListening();
+    }
+
+    private void printMessage(final Device device) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    EscPos printer = new EscPos(getApplicationContext(),new EscPosMessage());
+
+                    PrinterUtils.printProduct(printer,"Teste2",9.99,1,1);
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("commands",printer.getEscPosMessage().getMessages());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e(TAG, "onDeviceFound: " + jsonObject.toString());
+
+                    device.sendMessage(jsonObject.toString());
+                }
+            }
+        }).start();
+
     }
 
     private void testDeviceWifi(final Device device) {
