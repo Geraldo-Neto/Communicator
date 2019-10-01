@@ -69,4 +69,9 @@ public class CommunicatorServiceStarter {
         }
 
     }
+
+    public void setNotificationMessage(String title, String content) {
+        Communicator.getInstance(context).setNotificationMessage(title,content);
+
+    }
 }

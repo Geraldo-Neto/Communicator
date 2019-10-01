@@ -66,6 +66,7 @@ public class CommunicatorService extends Service {
     }
 
     private void startNotification(Intent intent) {
+        Communicator communicator = Communicator.getInstance(getApplicationContext());
 
         if (intent.getExtras().getString(EXTRA_ACTIVITY_CLASS) == null)
             return;
@@ -81,8 +82,8 @@ public class CommunicatorService extends Service {
                 0, notificationIntent, 0);
 
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                .setContentTitle("Chama garçom")
-                .setContentText("Escutando por chamadas")
+                .setContentTitle(communicator.getNotificationTitle())
+                .setContentText(communicator.getNotificationContent())
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)

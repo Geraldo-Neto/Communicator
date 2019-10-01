@@ -24,6 +24,8 @@ public class Communicator {
     private NsdHelper nsdHelper;
     private String deviceName;
     private int servicePort;
+    private String notificationTitle;
+    private String notificationContent;
 
     public Communicator(Context context) {
         this.context = context;
@@ -192,5 +194,26 @@ public class Communicator {
 
     public void setServicePort(int servicePort) {
         this.servicePort = servicePort;
+    }
+
+    public void setNotificationMessage(String title, String content) {
+        this.notificationTitle = title;
+        this.notificationContent = content;
+    }
+
+    public String getNotificationTitle() {
+        return notificationTitle;
+    }
+
+    public void setNotificationTitle(String notificationTitle) {
+        this.notificationTitle = notificationTitle;
+    }
+
+    public String getNotificationContent() {
+        return notificationContent;
+    }
+
+    public void setNotificationContent(String notificationContent) {
+        this.notificationContent = notificationContent;
     }
 }

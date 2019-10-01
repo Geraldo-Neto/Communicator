@@ -13,7 +13,12 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         CommunicatorServiceStarter communicatorServiceStarter =
-                new CommunicatorServiceStarter(getApplicationContext(), MainActivity.class, "pos" + Utils.getDeviceMAC().replace(":",""));
+                new CommunicatorServiceStarter(getApplicationContext(),
+                        MainActivity.class,
+                        "pos" + Utils.getDeviceMAC().replace(":",""),
+                        41156);
+        communicatorServiceStarter.setNotificationMessage("ThingsPOS","Escutando por chamadas!");
+
         communicatorServiceStarter.start();
     }
 
