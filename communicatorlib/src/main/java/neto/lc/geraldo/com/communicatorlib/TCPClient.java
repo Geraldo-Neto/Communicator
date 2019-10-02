@@ -109,8 +109,12 @@ public class TCPClient {
         Log.d(TAG, "stop: ");
         running = false;
         if (bufferOut != null) {
+            try{
             bufferOut.flush();
             bufferOut.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         bufferIn = null;
         bufferOut = null;
