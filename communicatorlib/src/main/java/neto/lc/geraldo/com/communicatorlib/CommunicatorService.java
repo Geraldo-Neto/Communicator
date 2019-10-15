@@ -40,17 +40,19 @@ public class CommunicatorService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.e(TAG, "onStartCommand:" + "SERVICE STARTED" );
 
         if(!Communicator.getInstance(getApplicationContext()).isRunning()){
-            return START_NOT_STICKY;
+            stopSelf();
+            stopForeground(true);
+            Log.e(TAG, "onStartCommand:" + "SERVICE STOPPED" );
+            stopService(new Intent(getApplicationContext(), this.getClass()));
+            return super.onStartCommand(intent,flags,startId);
         }
 
         startNotification(intent);
-
-
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
-
         PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         alarmService.set(

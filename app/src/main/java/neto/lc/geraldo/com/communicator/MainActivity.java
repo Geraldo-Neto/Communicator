@@ -15,11 +15,13 @@ import neto.lc.geraldo.com.communicator.escpospi.EscPos;
 import neto.lc.geraldo.com.communicator.escpospi.EscPosMessage;
 import neto.lc.geraldo.com.communicator.escpospi.PrinterUtils;
 import neto.lc.geraldo.com.communicatorlib.Communicator;
+import neto.lc.geraldo.com.communicatorlib.CommunicatorServiceStarter;
 import neto.lc.geraldo.com.communicatorlib.Device;
 import neto.lc.geraldo.com.communicatorlib.DeviceDiscoveryListener;
 import neto.lc.geraldo.com.communicatorlib.DeviceMessage;
 import neto.lc.geraldo.com.communicatorlib.OnConnectionChangedListener;
 import neto.lc.geraldo.com.communicatorlib.OnDeviceMessageListener;
+import neto.lc.geraldo.com.communicatorlib.Utils;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -98,9 +100,21 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Log.e(TAG, "onClick:" + communicator.deviceList.size() );
-                for(Device device:communicator.deviceList){
+                /*for(Device device:communicator.deviceList){
                     if(device.getName().contains("prt"))
                         printMessage(device);
+                }*/
+                if(communicator.isRunning()){
+                    communicator.stop();
+                } else {
+                    CommunicatorServiceStarter communicatorServiceStarter =
+                            new CommunicatorServiceStarter(getApplicationContext(),
+                                    MainActivity.class,
+                                    "pos" + Utils.getDeviceMAC().replace(":",""),
+                                    41156);
+                    communicatorServiceStarter.setNotificationMessage("ThingsPOS","Escutando por chamadas!");
+
+                    communicatorServiceStarter.start();
                 }
 
             }
