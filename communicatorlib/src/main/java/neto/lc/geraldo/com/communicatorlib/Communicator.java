@@ -26,6 +26,7 @@ public class Communicator {
     private int servicePort;
     private String notificationTitle;
     private String notificationContent;
+    private boolean running = false;
 
     public Communicator(Context context) {
         this.context = context;
@@ -215,5 +216,17 @@ public class Communicator {
 
     public void setNotificationContent(String notificationContent) {
         this.notificationContent = notificationContent;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void stop() {
+        this.running = false;
+    }
+
+    public void start() {
+        this.running = true;
     }
 }

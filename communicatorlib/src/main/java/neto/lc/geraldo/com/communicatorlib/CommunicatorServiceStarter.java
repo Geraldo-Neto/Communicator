@@ -55,11 +55,13 @@ public class CommunicatorServiceStarter {
     private void startService(){
         Communicator.getInstance(context).setDeviceName(deviceName);
         Communicator.getInstance(context).setServicePort(servicePort);
+        Communicator.getInstance(context).start();
         Intent serviceIntent = new Intent(context, CommunicatorService.class);
 
         serviceIntent.putExtra(CommunicatorService.EXTRA_ACTIVITY_CLASS,activityClass.getName());
 
         ContextCompat.startForegroundService(context,serviceIntent);
+
     }
 
     public void start(){
@@ -67,7 +69,6 @@ public class CommunicatorServiceStarter {
             createNotificationChannel();
             startService();
         }
-
     }
 
     public void setNotificationMessage(String title, String content) {

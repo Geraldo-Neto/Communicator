@@ -41,6 +41,10 @@ public class CommunicatorService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if(!Communicator.getInstance(getApplicationContext()).isRunning()){
+            return START_NOT_STICKY;
+        }
+
         startNotification(intent);
 
 
