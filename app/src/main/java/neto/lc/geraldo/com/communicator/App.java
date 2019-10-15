@@ -21,6 +21,4 @@ public class App extends Application {
 
         communicatorServiceStarter.start();
     }
-
-
 }
