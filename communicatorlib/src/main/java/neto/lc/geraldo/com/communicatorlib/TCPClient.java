@@ -27,6 +27,7 @@ public class TCPClient {
     // used to read messages from the server
     private BufferedReader bufferIn;
     private Socket socket;
+    private int timeout = 3000;
 
     public boolean isConnected() {
         return connected;
@@ -134,7 +135,7 @@ public class TCPClient {
                     try {
                         if(socket==null)
                             continue;
-                        boolean connectedNow = socket.getInetAddress().isReachable(1500);
+                        boolean connectedNow = socket.getInetAddress().isReachable(timeout);
                         if(connectedNow != connected){
                             connected = connectedNow;
                             if(onConnectionChangedListener!=null)
@@ -209,4 +210,11 @@ public class TCPClient {
         this.onConnectionChangedListener = onConnectionChangedListener;
     }
 
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 }

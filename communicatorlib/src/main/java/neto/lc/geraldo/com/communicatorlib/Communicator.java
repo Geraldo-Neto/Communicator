@@ -27,6 +27,7 @@ public class Communicator {
     private String notificationTitle;
     private String notificationContent;
     private boolean running = false;
+    private int deviceTimeout = 3000;
 
     public Communicator(Context context) {
         this.context = context;
@@ -77,8 +78,10 @@ public class Communicator {
     }
 
     public void startDiscovery(){
-        if(nsdHelper == null)
+        if(nsdHelper == null){
             nsdHelper = new NsdHelper(context);
+            nsdHelper.setDeviceTimeout(deviceTimeout);
+        }
 
         nsdHelper.initDeviceDiscovery(new NsdHelper.OnDeviceFoundListener() {
             @Override
@@ -107,8 +110,11 @@ public class Communicator {
     }
 
     public void startServiceRegister(){
-        if(nsdHelper == null)
+        if(nsdHelper == null){
             nsdHelper = new NsdHelper(context);
+            nsdHelper.setDeviceTimeout(deviceTimeout);
+        }
+
 
         MultiClientTCPServer multiClientTCPServer = new MultiClientTCPServer(servicePort, new OnClientMessageListener() {
             @Override
@@ -228,5 +234,13 @@ public class Communicator {
 
     public void start() {
         this.running = true;
+    }
+
+    public int getDeviceTimeout() {
+        return deviceTimeout;
+    }
+
+    public void setDeviceTimeout(int deviceTimeout) {
+        this.deviceTimeout = deviceTimeout;
     }
 }

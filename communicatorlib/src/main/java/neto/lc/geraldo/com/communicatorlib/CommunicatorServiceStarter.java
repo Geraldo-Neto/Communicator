@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 public class CommunicatorServiceStarter {
     private static final String TAG = "CommunicatorStarter";
     private final int servicePort;
+    private int timeout = 3000;
     private String deviceName;
     private Context context;
     private Class activityClass;
@@ -22,6 +23,14 @@ public class CommunicatorServiceStarter {
         this.activityClass = activityClass;
         this.deviceName = deviceName;
         this.servicePort = servicePort;
+    }
+
+    public CommunicatorServiceStarter(Context context, Class activityClass,String deviceName,int servicePort, int timeout){
+        this.context = context;
+        this.activityClass = activityClass;
+        this.deviceName = deviceName;
+        this.servicePort = servicePort;
+        this.timeout = timeout;
     }
 
 
@@ -55,7 +64,9 @@ public class CommunicatorServiceStarter {
     private void startService(){
         Communicator.getInstance(context).setDeviceName(deviceName);
         Communicator.getInstance(context).setServicePort(servicePort);
+        Communicator.getInstance(context).setDeviceTimeout(timeout);
         Communicator.getInstance(context).start();
+
         Intent serviceIntent = new Intent(context, CommunicatorService.class);
 
         serviceIntent.putExtra(CommunicatorService.EXTRA_ACTIVITY_CLASS,activityClass.getName());
@@ -73,6 +84,5 @@ public class CommunicatorServiceStarter {
 
     public void setNotificationMessage(String title, String content) {
         Communicator.getInstance(context).setNotificationMessage(title,content);
-
     }
 }

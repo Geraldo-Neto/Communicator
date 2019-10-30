@@ -19,6 +19,7 @@ public class NsdHelper {
     private NsdManager.ResolveListener resolveListener;
     private OnDeviceFoundListener onDeviceFoundListener;
     private String hostAddress = "";
+    private int deviceTimeout = 3000;
 
     public void setServerIp(String hostAddress) {
         this.hostAddress = hostAddress;
@@ -33,7 +34,6 @@ public class NsdHelper {
         this.nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
 
     }
-
 
     public void initializeRegistrationListener() {
         registrationListener = new NsdManager.RegistrationListener() {
@@ -149,7 +149,9 @@ public class NsdHelper {
                 }
 
                 DeviceType deviceType = DeviceType.getDeviceTypeFromString(serviceInfo.getServiceName());
-                Device device = new Device(serviceInfo.getServiceName(),deviceType,new TCPClient(host.getHostAddress(),port));
+                TCPClient tcpClient = new TCPClient(host.getHostAddress(),port);
+                tcpClient.setTimeout(deviceTimeout);
+                Device device = new Device(serviceInfo.getServiceName(),deviceType,tcpClient);
                 onDeviceFoundListener.onDeviceFound(device);
             }
         };
@@ -162,6 +164,14 @@ public class NsdHelper {
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }
 
+
+    public int getDeviceTimeout() {
+        return deviceTimeout;
+    }
+
+    public void setDeviceTimeout(int deviceTimeout) {
+        this.deviceTimeout = deviceTimeout;
+    }
 
     public void tearDown() {
         if(registrationListener!=null && discoveryListener!=null){
