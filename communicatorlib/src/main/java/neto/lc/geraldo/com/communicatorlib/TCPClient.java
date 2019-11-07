@@ -128,7 +128,7 @@ public class TCPClient {
             public void run() {
                 while(true){
                     try{
-                        Thread.sleep(200);
+                        Thread.sleep(1500);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
