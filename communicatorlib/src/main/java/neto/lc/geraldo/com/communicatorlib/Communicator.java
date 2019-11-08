@@ -120,6 +120,8 @@ public class Communicator {
             @Override
             public void onClientMessage(String message, Socket socket) {
                 Log.e(TAG, "onClientMessage: " + message);
+                if(message==null)
+                    return;
                 DeviceMessage deviceMessage = new DeviceMessage(getDeviceFromSocket(socket), message);
                 addDeviceMessage(deviceMessage);
             }
