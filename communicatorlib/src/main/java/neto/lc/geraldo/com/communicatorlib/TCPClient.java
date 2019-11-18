@@ -166,7 +166,6 @@ public class TCPClient {
             public void run() {
                 running = true;
                 try{
-                    
                     socket = new Socket(serverIp,serverPort);
                     socket.setReuseAddress(true);
                     startConnectionStatusChecker();
@@ -178,7 +177,7 @@ public class TCPClient {
                             String message = bufferIn.readLine();
                             Log.d(TAG, "run: " + message);
                             if(message==null){
-                                //Log.d(TAG, "run: " + "disconnected!!!");
+                                Log.d(TAG, "run: " + "disconnected!!!");
                                 stop();
                                 //start();
                             }
@@ -192,7 +191,6 @@ public class TCPClient {
                                 e.printStackTrace();
                             }
                         }
-
                     }catch (Exception e){
                         e.printStackTrace();
 

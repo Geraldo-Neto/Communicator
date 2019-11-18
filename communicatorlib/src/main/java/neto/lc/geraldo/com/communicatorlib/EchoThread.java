@@ -1,5 +1,7 @@
 package neto.lc.geraldo.com.communicatorlib;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,37 +10,14 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class EchoThread extends Thread {
+    private static final String TAG = "EchoThread";
     protected Socket socket;
     OnClientMessageListener messageListener;
 
     public EchoThread(Socket clientSocket, OnClientMessageListener messageListener) {
         this.socket = clientSocket;
         this.messageListener = messageListener;
-    }
-
-    public void startPinging(final DataOutputStream outputStream){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean running = true;
-                while(running){
-                    try {
-                        outputStream.writeBytes("teus gay\n");
-                        outputStream.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        running = false;
-                    }
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }).start();
-
+        Log.e(TAG, "EchoThread: created" );
     }
 
     public void run() {
@@ -49,7 +28,6 @@ public class EchoThread extends Thread {
             inp = socket.getInputStream();
             brinp = new BufferedReader(new InputStreamReader(inp));
             out = new DataOutputStream(socket.getOutputStream());
-            //startPinging(out);
         } catch (IOException e) {
             return;
         }
@@ -57,12 +35,15 @@ public class EchoThread extends Thread {
         while (true) {
             try {
                 line = brinp.readLine();
+                if(line==null){
+                    Log.e(TAG, "run: EchoThread client closed connection" );
+                    //TODO provide better solution!!
+                    this.socket.close();
+                    return;
+                }
+
+
                 this.messageListener.onClientMessage(line,socket);
-                //out.writeBytes(line + "\n\r");
-                //out.writeBytes("teus gay\n");
-                //out.flush();
-
-
             } catch (IOException e) {
                 //e.printStackTrace();
                 return;
