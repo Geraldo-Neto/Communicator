@@ -73,6 +73,10 @@ public class CommunicatorService extends Service {
     }
 
     private void startNotification(Intent intent) {
+        if(intent==null){
+            return;
+        }
+
         Communicator communicator = Communicator.getInstance(getApplicationContext());
 
         if (intent.getExtras().getString(EXTRA_ACTIVITY_CLASS) == null)

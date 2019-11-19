@@ -44,6 +44,22 @@ public class Communicator {
         return instance;
     }
 
+    public void restart(){
+        this.context = context;
+        incomingMessageQueue = new ConcurrentLinkedQueue<>();
+        onDeviceMessageListeners = new ArrayList<>();
+        deviceList = new ArrayList<>();
+        deviceDiscoveryListeners = new ArrayList<>();
+    }
+
+    public void clearDeviceListener(){
+        deviceDiscoveryListeners.clear();
+    }
+
+    public void clearOnDeviceMessageListener(){
+        onDeviceMessageListeners.clear();
+    }
+
     public void setDeviceName(String deviceName){
         this.deviceName = deviceName;
     }
@@ -53,7 +69,7 @@ public class Communicator {
         Log.e(TAG, "addDeviceListener: " + deviceDiscoveryListeners.size() );
     }
 
-    public void addOnDeviceMessageListenerListener(OnDeviceMessageListener listener){
+    public void addOnDeviceMessageListener(OnDeviceMessageListener listener){
         onDeviceMessageListeners.add(listener);
     }
 

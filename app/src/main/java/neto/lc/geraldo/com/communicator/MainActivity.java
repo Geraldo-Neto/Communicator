@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        communicator.addOnDeviceMessageListenerListener(new OnDeviceMessageListener() {
+        communicator.addOnDeviceMessageListener(new OnDeviceMessageListener() {
             @Override
             public void onDeviceMessage(DeviceMessage deviceMessage) {
                 Log.e(TAG, "onDeviceMessage: " + deviceMessage.getMessage() + " : " + deviceMessage.getDevice());
