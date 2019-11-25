@@ -52,14 +52,6 @@ public class Communicator {
         deviceDiscoveryListeners = new ArrayList<>();
     }
 
-    public void clearDeviceListener(){
-        deviceDiscoveryListeners.clear();
-    }
-
-    public void clearOnDeviceMessageListener(){
-        onDeviceMessageListeners.clear();
-    }
-
     public void setDeviceName(String deviceName){
         this.deviceName = deviceName;
     }
@@ -90,7 +82,22 @@ public class Communicator {
                 Log.e(TAG, "addDeviceMessage: " + deviceMessage.getDevice() );
             }
         }
+    }
 
+    public void clearDeviceListener(){
+        deviceDiscoveryListeners.clear();
+    }
+
+    public void clearOnDeviceMessageListener(){
+        onDeviceMessageListeners.clear();
+    }
+
+    public void removeDeviceListener(DeviceDiscoveryListener deviceDiscoveryListener){
+        deviceDiscoveryListeners.remove(deviceDiscoveryListener);
+    }
+
+    public void removeOnDeviceMessageListener(OnDeviceMessageListener onDeviceMessageListener){
+        onDeviceMessageListeners.remove(onDeviceMessageListener);
     }
 
     public void startDiscovery(){
