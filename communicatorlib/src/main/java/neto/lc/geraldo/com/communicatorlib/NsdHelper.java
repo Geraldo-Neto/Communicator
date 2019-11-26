@@ -95,7 +95,6 @@ public class NsdHelper {
                 if (service.getServiceType().contains("things")) {
                     /*if (service.getServiceName().equals(serviceName))
                         return;//same device*/
-                    initializeResolveListener();
                     nsdManager.resolveService(service, resolveListener);
                     Log.d(TAG, "onServiceFound: Resolving service!");
                 }
@@ -160,6 +159,7 @@ public class NsdHelper {
 
     public void initDeviceDiscovery(OnDeviceFoundListener deviceFoundListener) {
         this.onDeviceFoundListener = deviceFoundListener;
+        initializeResolveListener();
         initializeDiscoveryListener();
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }
