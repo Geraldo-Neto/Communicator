@@ -95,7 +95,33 @@ public class NsdHelper {
                 if (service.getServiceType().contains("things")) {
                     /*if (service.getServiceName().equals(serviceName))
                         return;//same device*/
-                    nsdManager.resolveService(service, resolveListener);
+                    nsdManager.resolveService(service, new NsdManager.ResolveListener() {
+
+                        @Override
+                        public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+                            // Called when the resolve fails. Use the error code to debug.
+                            Log.e(TAG, "Resolve failed: " + errorCode);
+                        }
+
+                        @Override
+                        public void onServiceResolved(NsdServiceInfo serviceInfo) {
+                            Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+                            Log.d(TAG, "onServiceResolved: " + serviceInfo.getHost().getHostAddress());
+
+                            int port = serviceInfo.getPort();
+                            InetAddress host = serviceInfo.getHost();
+                            if(host.getHostAddress().equals(hostAddress) || host.getHostAddress().contains("127.0.0.1")){
+                                Log.e(TAG, "onServiceResolved: " + host.getHostAddress() + " | " + Utils.getIpAddress(context) );
+                                return;
+                            }
+
+                            DeviceType deviceType = DeviceType.getDeviceTypeFromString(serviceInfo.getServiceName());
+                            TCPClient tcpClient = new TCPClient(host.getHostAddress(),port);
+                            tcpClient.setTimeout(deviceTimeout);
+                            Device device = new Device(serviceInfo.getServiceName(),deviceType,tcpClient);
+                            onDeviceFoundListener.onDeviceFound(device);
+                        }
+                    });
                     Log.d(TAG, "onServiceFound: Resolving service!");
                 }
             }
@@ -126,40 +152,9 @@ public class NsdHelper {
         };
     }
 
-    private void initializeResolveListener() {
-        resolveListener = new NsdManager.ResolveListener() {
-
-            @Override
-            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                // Called when the resolve fails. Use the error code to debug.
-                Log.e(TAG, "Resolve failed: " + errorCode);
-            }
-
-            @Override
-            public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
-                Log.d(TAG, "onServiceResolved: " + serviceInfo.getHost().getHostAddress());
-
-                int port = serviceInfo.getPort();
-                InetAddress host = serviceInfo.getHost();
-                if(host.getHostAddress().equals(hostAddress) || host.getHostAddress().contains("127.0.0.1")){
-                    Log.e(TAG, "onServiceResolved: " + host.getHostAddress() + " | " + Utils.getIpAddress(context) );
-                    return;
-                }
-
-                DeviceType deviceType = DeviceType.getDeviceTypeFromString(serviceInfo.getServiceName());
-                TCPClient tcpClient = new TCPClient(host.getHostAddress(),port);
-                tcpClient.setTimeout(deviceTimeout);
-                Device device = new Device(serviceInfo.getServiceName(),deviceType,tcpClient);
-                onDeviceFoundListener.onDeviceFound(device);
-            }
-        };
-    }
-
 
     public void initDeviceDiscovery(OnDeviceFoundListener deviceFoundListener) {
         this.onDeviceFoundListener = deviceFoundListener;
-        initializeResolveListener();
         initializeDiscoveryListener();
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }
