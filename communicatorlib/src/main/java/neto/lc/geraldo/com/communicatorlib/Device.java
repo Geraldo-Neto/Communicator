@@ -81,6 +81,10 @@ public class Device {
         });
     }
 
+    public void stop(){
+        tcpClient.stop();
+    }
+
     public void start(OnConnectionChangedListener onConnectionChangedListener,
                       OnMessageListener onMessageListener) {
         start();

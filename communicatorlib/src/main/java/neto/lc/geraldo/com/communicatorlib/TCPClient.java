@@ -107,40 +107,49 @@ public class TCPClient {
      * Close the connection and release the members
      */
     public void stop() {
+
         Log.d(TAG, "stop: ");
         running = false;
         if (bufferOut != null) {
-            try{
-            bufferOut.flush();
-            bufferOut.close();
-            }catch (Exception e){
+            try {
+                bufferOut.flush();
+                bufferOut.close();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         bufferIn = null;
         bufferOut = null;
         serverMessage = null;
+       /* if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            socket = null;
+        }*/
     }
 
-    public void startConnectionStatusChecker(){
+    public void startConnectionStatusChecker() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
-                    try{
+                while (true) {
+                    try {
                         Thread.sleep(1500);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     try {
-                        if(socket==null)
+                        if (socket == null)
                             continue;
                         boolean connectedNow = socket.getInetAddress().isReachable(timeout);
-                        if(connectedNow != connected){
+                        if (connectedNow != connected) {
                             connected = connectedNow;
-                            if(onConnectionChangedListener!=null)
+                            if (onConnectionChangedListener != null)
                                 onConnectionChangedListener.onConnectionChanged(connected);
-                            if(connected)
+                            if (connected) {
                                 start(new ConnectionStartListener() {
                                     @Override
                                     public void onSuccess() {
@@ -149,11 +158,12 @@ public class TCPClient {
 
                                     @Override
                                     public void onError() {
-                                        start(this);
+                                        //start(this);
                                     }
                                 });
-                            else
+                            } else {
                                 stop();
+                            }
                             Log.d(TAG, "run: " + "KEPP_ALIVE" + connected);
                         }
                         connected = connectedNow;
@@ -168,36 +178,37 @@ public class TCPClient {
         }).start();
     }
 
-    public interface ConnectionStartListener{
+    public interface ConnectionStartListener {
         void onSuccess();
+
         void onError();
     }
 
     public void start(final ConnectionStartListener connectionStartListener) {
-        if(running)
+        if (running)
             return;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 running = true;
-                try{
-                    socket = new Socket(serverIp,serverPort);
+                try {
+                    socket = new Socket(serverIp, serverPort);
                     socket.setReuseAddress(true);
                     startConnectionStatusChecker();
-                    try{
+                    try {
                         bufferIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         bufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
                         Log.d(TAG, "run: starting client: " + socket.getInetAddress().getHostAddress());
                         connectionStartListener.onSuccess();
-                        while (running){
+                        while (running) {
                             String message = bufferIn.readLine();
                             Log.d(TAG, "run: " + message);
-                            if(message==null){
+                            if (message == null) {
                                 Log.d(TAG, "run: " + "disconnected!!!");
                                 stop();
                                 //start();
                             }
-                            if(message!= null && messageListener!=null){
+                            if (message != null && messageListener != null) {
                                 messageListener.onMessageReceived(message);
                                 //Log.d(TAG, "run: " + message);
                             }
@@ -207,19 +218,19 @@ public class TCPClient {
                                 e.printStackTrace();
                             }
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                         connectionStartListener.onError();
-                    }finally {
-                      socket.close();
-                      stop();
-                      onConnectionChangedListener.onConnectionChanged(connected);
+                    } finally {
+                        socket.close();
+                        stop();
+                        onConnectionChangedListener.onConnectionChanged(connected);
                     }
-                }catch (Exception e ){
+                } catch (Exception e) {
                     e.printStackTrace();
                     try {
                         socket.close();
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                     stop();
