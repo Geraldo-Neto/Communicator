@@ -52,7 +52,17 @@ public class Device {
     }
 
     public void start() {
-        tcpClient.start();
+        tcpClient.start(new TCPClient.ConnectionStartListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+                tcpClient.start(this);
+            }
+        });
         tcpClient.setOnConnectionChangedListener(new OnConnectionChangedListener() {
             @Override
             public void onConnectionChanged(boolean connected) {

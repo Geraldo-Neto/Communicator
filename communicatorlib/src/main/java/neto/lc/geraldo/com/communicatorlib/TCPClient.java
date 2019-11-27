@@ -141,7 +141,17 @@ public class TCPClient {
                             if(onConnectionChangedListener!=null)
                                 onConnectionChangedListener.onConnectionChanged(connected);
                             if(connected)
-                                start();
+                                start(new ConnectionStartListener() {
+                                    @Override
+                                    public void onSuccess() {
+
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        start(this);
+                                    }
+                                });
                             else
                                 stop();
                             Log.d(TAG, "run: " + "KEPP_ALIVE" + connected);
@@ -158,7 +168,12 @@ public class TCPClient {
         }).start();
     }
 
-    public void start() {
+    public interface ConnectionStartListener{
+        void onSuccess();
+        void onError();
+    }
+
+    public void start(final ConnectionStartListener connectionStartListener) {
         if(running)
             return;
         new Thread(new Runnable() {
@@ -173,6 +188,7 @@ public class TCPClient {
                         bufferIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         bufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
                         Log.d(TAG, "run: starting client: " + socket.getInetAddress().getHostAddress());
+                        connectionStartListener.onSuccess();
                         while (running){
                             String message = bufferIn.readLine();
                             Log.d(TAG, "run: " + message);
@@ -193,12 +209,21 @@ public class TCPClient {
                         }
                     }catch (Exception e){
                         e.printStackTrace();
-
+                        connectionStartListener.onError();
                     }finally {
                       socket.close();
+                      stop();
+                      onConnectionChangedListener.onConnectionChanged(connected);
                     }
                 }catch (Exception e ){
                     e.printStackTrace();
+                    try {
+                        socket.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    stop();
+                    onConnectionChangedListener.onConnectionChanged(connected);
                 }
             }
         }).start();
