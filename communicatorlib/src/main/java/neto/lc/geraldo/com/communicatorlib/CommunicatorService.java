@@ -140,7 +140,7 @@ public class CommunicatorService extends Service {
 
             @Override
             public void onDeviceRemoved(Device device) {
-
+                device.stop();
             }
 
             @Override

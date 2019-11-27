@@ -121,13 +121,13 @@ public class TCPClient {
         bufferIn = null;
         bufferOut = null;
         serverMessage = null;
-        /*if (socket != null) {
+        if (socket != null) {
             try {
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 
     public void startConnectionStatusChecker() {

@@ -18,7 +18,7 @@ public class App extends Application {
                         "pos" + Utils.getDeviceMAC().replace(":",""),
                         41156);
         communicatorServiceStarter.setNotificationMessage("ThingsPOS","Escutando por chamadas!");
-        communicatorServiceStarter.setDeviceTimeout(20000);
+        communicatorServiceStarter.setDeviceTimeout(30000);
 
         communicatorServiceStarter.start();
     }
