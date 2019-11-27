@@ -110,10 +110,9 @@ public class Communicator {
             @Override
             public void onDeviceFound(final Device device) {
                 if (deviceList.contains(device)) {
-                    //Device prevDevice  = deviceList.get(deviceList.indexOf(device));
-                    //prevDevice.stop();
-                    //deviceList.remove(deviceList.indexOf(prevDevice));
-                    deviceList.add(device);
+                    Device prevDevice  = deviceList.get(deviceList.indexOf(device));
+                    prevDevice.stop();
+                    deviceList.remove(deviceList.indexOf(prevDevice));
                     Log.e(TAG, "onDeviceFound: RECONNECTED " + device);
                     deviceReconnected(device);
                     device.addOnConnectionChangedListener(new OnConnectionChangedListener() {
@@ -233,6 +232,7 @@ public class Communicator {
     }
 
     public void deviceReconnected(Device device) {
+        deviceList.add(device);
         for(DeviceDiscoveryListener listener:deviceDiscoveryListeners){
             listener.onDeviceReconnected(device);
         }

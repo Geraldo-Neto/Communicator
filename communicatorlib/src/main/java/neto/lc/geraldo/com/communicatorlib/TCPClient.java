@@ -121,13 +121,12 @@ public class TCPClient {
         bufferIn = null;
         bufferOut = null;
         serverMessage = null;
-       /* if (socket != null) {
+        /*if (socket != null) {
             try {
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            socket = null;
         }*/
     }
 
@@ -222,17 +221,11 @@ public class TCPClient {
                         e.printStackTrace();
                         connectionStartListener.onError();
                     } finally {
-                        socket.close();
                         stop();
                         onConnectionChangedListener.onConnectionChanged(connected);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    try {
-                        socket.close();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
                     stop();
                     onConnectionChangedListener.onConnectionChanged(connected);
                 }
