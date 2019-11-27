@@ -124,7 +124,7 @@ public class TCPClient {
         if (socket != null) {
             try {
                 socket.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

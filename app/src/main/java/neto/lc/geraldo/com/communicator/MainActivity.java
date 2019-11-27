@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onDeviceFound(final Device device) {
                 Log.e(TAG, "onDeviceFound: " + device);
-                device.addOnConnectionChangedListener(new OnConnectionChangedListener() {
+                /*device.addOnConnectionChangedListener(new OnConnectionChangedListener() {
                     @Override
                     public void onConnectionChanged(boolean connected) {
                         if(connected)
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity{
                 }
 
                 //testDeviceWifi(device);
-
+*/
 
             }
 
