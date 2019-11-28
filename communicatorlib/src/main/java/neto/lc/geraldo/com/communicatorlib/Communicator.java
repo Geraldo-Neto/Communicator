@@ -112,21 +112,9 @@ public class Communicator {
                 if (deviceList.contains(device)) {
                     Device prevDevice  = deviceList.get(deviceList.indexOf(device));
                     prevDevice.stop();
-                    deviceList.remove(prevDevice);
-                    prevDevice=null;
+                    prevDevice.setTcpClient(device.getTcpClient());
                     Log.e(TAG, "onDeviceFound: RECONNECTED " + device);
                     deviceReconnected(device);
-                    device.addOnConnectionChangedListener(new OnConnectionChangedListener() {
-                        @Override
-                        public void onConnectionChanged(boolean connected) {
-                            for(DeviceDiscoveryListener listener:deviceDiscoveryListeners){
-                                if(connected)
-                                    listener.onDeviceReconnected(device);
-                                else
-                                    listener.onDeviceRemoved(device);
-                            }
-                        }
-                    });
                     return;
                 }
                 Log.e(TAG, "onDeviceFound: NEW " + device);

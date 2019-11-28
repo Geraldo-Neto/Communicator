@@ -146,25 +146,6 @@ public class CommunicatorService extends Service {
             @Override
             public void onDeviceReconnected(final Device device) {
 
-                //device.start();
-                /*device.addOnMessageListener(new OnMessageListener() {
-                    @Override
-                    public void onMessageReceived(String message) {
-                        Log.e(TAG, "onMessageReceived: " + message);
-                        Log.e(TAG, "onMessageReceived: " +
-                                Communicator.getInstance(getApplicationContext()).deviceList.size());
-                        if (message.contains("#WC")) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showScreen();
-                                }
-                            });
-                        }
-                        Communicator.getInstance(
-                                getApplicationContext()).addDeviceMessage(new DeviceMessage(device,message));
-                    }
-                });*/
             }
         });
 

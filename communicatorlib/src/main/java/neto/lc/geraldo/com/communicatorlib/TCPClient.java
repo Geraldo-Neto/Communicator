@@ -235,11 +235,13 @@ public class TCPClient {
                         connectionStartListener.onError();
                     } finally {
                         stop();
+                        connected = false;
                         onConnectionChangedListener.onConnectionChanged(connected);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                     stop();
+                    connected = false;
                     onConnectionChangedListener.onConnectionChanged(connected);
                 }
             }

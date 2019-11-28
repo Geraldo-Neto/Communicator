@@ -18,6 +18,14 @@ public class Device {
         this.name = deviceName;
     }
 
+    public TCPClient getTcpClient() {
+        return tcpClient;
+    }
+
+    public void setTcpClient(TCPClient tcpClient) {
+        this.tcpClient = tcpClient;
+    }
+
     public String getName() {
         return name;
     }
@@ -44,8 +52,7 @@ public class Device {
 
     @Override
     public boolean equals(Object obj){
-        return tcpClient.getServerIp().equals(((Device)obj).tcpClient.getServerIp())
-                && getDeviceType()==((Device) obj).deviceType;
+        return name.equals(((Device)obj).getName());
     }
 
     @Override
