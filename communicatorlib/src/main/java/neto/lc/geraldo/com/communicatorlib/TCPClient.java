@@ -167,8 +167,8 @@ public class TCPClient {
                         }else if(connectedNow){
                             if(socket!=null){
                                 try{
-                                    socket.getOutputStream().write(0);
                                     Thread.sleep(2000);
+                                    socket.getOutputStream().write(0);
                                 }catch (Exception e){
                                     e.printStackTrace();
                                     connected=false;
