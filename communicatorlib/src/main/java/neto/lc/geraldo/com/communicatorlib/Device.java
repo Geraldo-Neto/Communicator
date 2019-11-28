@@ -9,7 +9,7 @@ public class Device {
     private DeviceType deviceType;
     private TCPClient tcpClient;
     private String UUID;
-    private ArrayList<OnMessageListener> onMessageListeners =  new ArrayList<>();
+    public ArrayList<OnMessageListener> onMessageListeners =  new ArrayList<>();
     private ArrayList<OnConnectionChangedListener> onConnectionChangedListeners = new ArrayList<>();
 
     public Device(String deviceName, DeviceType deviceType, TCPClient tcpClient) {
