@@ -179,6 +179,7 @@ public class TCPClient {
                                 try{
                                     Thread.sleep(2000);
                                     socket.getOutputStream().write('\n');
+                                    socket.getOutputStream().flush();
                                 }catch (Exception e){
                                     e.printStackTrace();
                                     if(!alive){
