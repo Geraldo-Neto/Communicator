@@ -89,7 +89,7 @@ public class NsdHelper {
             }
 
             @Override
-            public void onServiceFound(NsdServiceInfo service) {
+            public void onServiceFound(final NsdServiceInfo service) {
                 // A service was found! Do something with it.
                 Log.d(TAG, "Service discovery success" + service);
                 if (service.getServiceType().contains("things")) {
@@ -101,6 +101,11 @@ public class NsdHelper {
                         public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
                             // Called when the resolve fails. Use the error code to debug.
                             Log.e(TAG, "Resolve failed: " + errorCode);
+                            if(errorCode == NsdManager.FAILURE_ALREADY_ACTIVE ){
+                                nsdManager.resolveService(service,this);
+                            }
+                            Log.e(TAG, "Resolve failed: " + serviceInfo);
+
                         }
 
                         @Override
