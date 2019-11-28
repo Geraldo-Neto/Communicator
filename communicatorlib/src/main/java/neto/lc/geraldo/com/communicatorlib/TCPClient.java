@@ -164,6 +164,19 @@ public class TCPClient {
                                 stop();
                             }
                             Log.d(TAG, "run: " + "KEPP_ALIVE" + connected);
+                        }else if(connectedNow){
+                            if(socket!=null){
+                                try{
+                                    socket.getOutputStream().write(0);
+                                    Thread.sleep(2000);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    connected=false;
+                                    if (onConnectionChangedListener != null)
+                                        onConnectionChangedListener.onConnectionChanged(connected);
+                                    continue;
+                                }
+                            }
                         }
                         connected = connectedNow;
 
