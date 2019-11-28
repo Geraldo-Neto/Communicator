@@ -112,6 +112,7 @@ public class Communicator {
                 if (deviceList.contains(device)) {
                     Device prevDevice  = deviceList.get(deviceList.indexOf(device));
                     prevDevice.stop();
+                    prevDevice.getTcpClient().kill();
                     prevDevice.setTcpClient(device.getTcpClient());
                     Log.e(TAG, "onDeviceFound: RECONNECTED " + device);
                     deviceReconnected(device);

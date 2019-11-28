@@ -69,7 +69,7 @@ public class Device {
 
             @Override
             public void onError() {
-                tcpClient.start(this);
+                //tcpClient.start(this);
             }
         });
         tcpClient.setOnConnectionChangedListener(new OnConnectionChangedListener() {

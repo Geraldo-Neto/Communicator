@@ -28,6 +28,8 @@ public class TCPClient {
     private BufferedReader bufferIn;
     private Socket socket;
     private int timeout = 3000;
+    private Thread connectionCheckThread;
+    private boolean alive = true;
 
     public boolean isConnected() {
         return connected;
@@ -57,6 +59,10 @@ public class TCPClient {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.onConnectionChangedListener = onConnectionChangedListener;
+    }
+
+    public void kill(){
+        alive = false;
     }
 
     public String getServerIp() {
@@ -110,6 +116,7 @@ public class TCPClient {
 
         Log.d(TAG, "stop: ");
         running = false;
+        connected = false;
         if (bufferOut != null) {
             try {
                 bufferOut.flush();
@@ -121,20 +128,20 @@ public class TCPClient {
         bufferIn = null;
         bufferOut = null;
         serverMessage = null;
-        if (socket != null) {
+        /*if (socket != null) {
             try {
                 socket.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     public void startConnectionStatusChecker() {
-        new Thread(new Runnable() {
+        connectionCheckThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (alive) {
                     try {
                         Thread.sleep(1500);
                     } catch (Exception e) {
@@ -149,6 +156,9 @@ public class TCPClient {
                             if (onConnectionChangedListener != null)
                                 onConnectionChangedListener.onConnectionChanged(connected);
                             if (connected) {
+                                if(!alive){
+                                    return;
+                                }
                                 start(new ConnectionStartListener() {
                                     @Override
                                     public void onSuccess() {
@@ -171,6 +181,9 @@ public class TCPClient {
                                     socket.getOutputStream().write(0);
                                 }catch (Exception e){
                                     e.printStackTrace();
+                                    if(!alive){
+                                        return;
+                                    }
                                     connected=false;
                                     if (onConnectionChangedListener != null)
                                         onConnectionChangedListener.onConnectionChanged(connected);
@@ -187,7 +200,8 @@ public class TCPClient {
 
                 }
             }
-        }).start();
+        });
+        connectionCheckThread.start();
     }
 
     public interface ConnectionStartListener {
@@ -197,8 +211,9 @@ public class TCPClient {
     }
 
     public void start(final ConnectionStartListener connectionStartListener) {
-        if (running)
+        if (running|| !alive)
             return;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -212,7 +227,7 @@ public class TCPClient {
                         bufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
                         Log.d(TAG, "run: starting client: " + socket.getInetAddress().getHostAddress());
                         connectionStartListener.onSuccess();
-                        while (running) {
+                        while (running && alive) {
                             String message = bufferIn.readLine();
                             Log.d(TAG, "run: " + message);
                             if (message == null) {
