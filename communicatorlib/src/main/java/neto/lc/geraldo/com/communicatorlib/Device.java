@@ -1,5 +1,7 @@
 package neto.lc.geraldo.com.communicatorlib;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Device {
@@ -74,6 +76,7 @@ public class Device {
         tcpClient.setMessageListener(new OnMessageListener() {
             @Override
             public void onMessageReceived(String message) {
+                Log.e("Device", "onMessageReceived: " + onMessageListeners.size() );
                 for(OnMessageListener listener:onMessageListeners){
                     listener.onMessageReceived(message);
                 }

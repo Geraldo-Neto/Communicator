@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onDeviceMessage(DeviceMessage deviceMessage) {
                 Log.e(TAG, "onDeviceMessage: " + deviceMessage.getMessage() + " : " + deviceMessage.getDevice());
+                Log.e(TAG, "onDeviceMessage: List Size: " + communicator.deviceList.size() );
             }
         });
 
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity{
                                     "pos" + Utils.getDeviceMAC().replace(":",""),
                                     41156);
                     communicatorServiceStarter.setNotificationMessage("ThingsPOS","Escutando por chamadas!");
-                    communicatorServiceStarter.setDeviceTimeout(30000);
+                    communicatorServiceStarter.setDeviceTimeout(6000);
                     communicatorServiceStarter.start();
                 }
 

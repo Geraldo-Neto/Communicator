@@ -117,7 +117,7 @@ public class CommunicatorService extends Service {
             @Override
             public void onDeviceFound(final Device device) {
                 Log.e(TAG, "onDeviceFound: " + device);
-                device.start();
+                //device.start();
                 device.addOnMessageListener(new OnMessageListener() {
                     @Override
                     public void onMessageReceived(String message) {
@@ -140,13 +140,14 @@ public class CommunicatorService extends Service {
 
             @Override
             public void onDeviceRemoved(Device device) {
-                device.stop();
+                //device.stop();
             }
 
             @Override
             public void onDeviceReconnected(final Device device) {
-                device.start();
-                device.addOnMessageListener(new OnMessageListener() {
+
+                //device.start();
+                /*device.addOnMessageListener(new OnMessageListener() {
                     @Override
                     public void onMessageReceived(String message) {
                         Log.e(TAG, "onMessageReceived: " + message);
@@ -163,7 +164,7 @@ public class CommunicatorService extends Service {
                         Communicator.getInstance(
                                 getApplicationContext()).addDeviceMessage(new DeviceMessage(device,message));
                     }
-                });
+                });*/
             }
         });
 
