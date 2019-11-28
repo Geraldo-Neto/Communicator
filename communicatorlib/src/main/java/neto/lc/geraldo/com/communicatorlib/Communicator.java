@@ -223,8 +223,7 @@ public class Communicator {
     }
 
     public void deviceReconnected(Device device) {
-        deviceList.add(device);
-        //device.stop();
+
         device.start();
         for(DeviceDiscoveryListener listener:deviceDiscoveryListeners){
             listener.onDeviceReconnected(device);
