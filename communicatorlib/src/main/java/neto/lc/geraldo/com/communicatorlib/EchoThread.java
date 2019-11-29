@@ -13,6 +13,8 @@ public class EchoThread extends Thread {
     private static final String TAG = "EchoThread";
     protected Socket socket;
     OnClientMessageListener messageListener;
+    private Thread heartBeatThread;
+    private DataOutputStream out;
 
     public EchoThread(Socket clientSocket, OnClientMessageListener messageListener) {
         this.socket = clientSocket;
@@ -23,11 +25,12 @@ public class EchoThread extends Thread {
     public void run() {
         InputStream inp = null;
         BufferedReader brinp = null;
-        DataOutputStream out = null;
+        out = null;
         try {
             inp = socket.getInputStream();
             brinp = new BufferedReader(new InputStreamReader(inp));
             out = new DataOutputStream(socket.getOutputStream());
+            startHeartBeating();
         } catch (IOException e) {
             return;
         }
@@ -54,5 +57,27 @@ public class EchoThread extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void startHeartBeating() {
+        heartBeatThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    try {
+                        Thread.sleep(3000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        out.write("#H\n".getBytes());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        heartBeatThread.start();
+
     }
 }
