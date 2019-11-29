@@ -159,12 +159,12 @@ public class TCPClient {
                     boolean isReachable;
                     connectedNow = checkHeartBeat(timeout);
 
-                    Log.e(TAG, "ConnectionCheck heartbeat:" + connectedNow);
+                    //Log.e(TAG, "ConnectionCheck heartbeat:" + connectedNow);
 
                     if (!connectedNow) {
 
                         isReachable = checkReachable();
-                        Log.e(TAG, "ConnectionCheck reacheable:" + connectedNow);
+                        //Log.e(TAG, "ConnectionCheck reacheable:" + connectedNow);
 
                         connectedNow = checkHeartBeat(timeout);
                         if (isReachable && !connectedNow) {
@@ -172,7 +172,7 @@ public class TCPClient {
                         }
                     }
 
-                    Log.e(TAG, "ConnectionCheck: connectedNow: " + connectedNow);
+                    //Log.e(TAG, "ConnectionCheck: connectedNow: " + connectedNow);
                     //Log.e(TAG, "ConnectionCheck: connected: " + connectedNow);
 
                     if (connectedNow != connected) {
@@ -257,9 +257,9 @@ public class TCPClient {
                         connectionStartListener.onSuccess();
                         while (running && alive) {
                             String message = bufferIn.readLine();
-                            Log.d(TAG, "run: " + message);
+                            //Log.d(TAG, "run: " + message);
                             if (message == null) {
-                                Log.d(TAG, "run: " + "disconnected!!!");
+                                //Log.d(TAG, "run: " + "disconnected!!!");
                                 //stop();
                                 //start();
                             }
@@ -281,7 +281,7 @@ public class TCPClient {
                         connectionStartListener.onError();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         }).start();

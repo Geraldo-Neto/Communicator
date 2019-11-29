@@ -69,6 +69,8 @@ public class EchoThread extends Thread {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if(socket!=null && socket.isClosed())
+                        break;
                     try {
                         out.write("#H\n".getBytes());
                     } catch (Exception e) {
