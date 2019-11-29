@@ -30,6 +30,8 @@ public class TCPClient {
     private int timeout = 3000;
     private Thread connectionCheckThread;
     private boolean alive = true;
+    private boolean reconnecting = false;
+    private long lastHeartBeatTime;
 
     public boolean isConnected() {
         return connected;
@@ -39,7 +41,7 @@ public class TCPClient {
         this.connected = connected;
     }
 
-    private boolean connected;
+    private boolean connected = true;
 
     /**
      * Constructor of the class. OnMessagedReceived listens for the messages received from server
@@ -61,7 +63,7 @@ public class TCPClient {
         this.onConnectionChangedListener = onConnectionChangedListener;
     }
 
-    public void kill(){
+    public void kill() {
         alive = false;
     }
 
@@ -128,13 +130,14 @@ public class TCPClient {
         bufferIn = null;
         bufferOut = null;
         serverMessage = null;
-        /*if (socket != null) {
+        if (socket != null) {
             try {
                 socket.close();
+                socket = null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 
     public void startConnectionStatusChecker() {
@@ -143,66 +146,86 @@ public class TCPClient {
             public void run() {
                 while (alive) {
                     try {
-                        Thread.sleep(1500);
+                        Thread.sleep(1000);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        continue;
                     }
-                    try {
-                        if (socket == null)
-                            continue;
-                        boolean connectedNow = socket.getInetAddress().isReachable(timeout);
-                        if (connectedNow != connected) {
-                            connected = connectedNow;
-                            if (onConnectionChangedListener != null)
-                                onConnectionChangedListener.onConnectionChanged(connected);
-                            if (connected) {
-                                if(!alive){
-                                    return;
-                                }
-                                start(new ConnectionStartListener() {
-                                    @Override
-                                    public void onSuccess() {
+                    if (socket == null)
+                        continue;
+                    boolean connectedNow;
+                    boolean isReachable;
+                    connectedNow = checkHeartBeat(timeout);
 
-                                    }
+                    Log.e(TAG, "ConnectionCheck heartbeat:" + connectedNow);
 
-                                    @Override
-                                    public void onError() {
-                                        //start(this);
-                                    }
-                                });
-                            } else {
-                                stop();
-                            }
-                            Log.d(TAG, "run: " + "KEPP_ALIVE" + connected);
-                        }else if(connectedNow){
-                            if(socket!=null){
-                                try{
-                                    Thread.sleep(2000);
-                                    socket.getOutputStream().write('\n');
-                                    socket.getOutputStream().flush();
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                    if(!alive){
-                                        return;
-                                    }
-                                    connected=false;
-                                    if (onConnectionChangedListener != null)
-                                        onConnectionChangedListener.onConnectionChanged(connected);
-                                    continue;
-                                }
-                            }
+                    if (!connectedNow) {
+
+                        isReachable = checkReachable();
+                        Log.e(TAG, "ConnectionCheck reacheable:" + connectedNow);
+
+                        connectedNow = checkHeartBeat(timeout);
+                        if (isReachable && !connectedNow) {
+                            resetConnection();
                         }
-                        connected = connectedNow;
-
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+
+                    Log.e(TAG, "ConnectionCheck: connectedNow: " + connectedNow);
+                    //Log.e(TAG, "ConnectionCheck: connected: " + connectedNow);
+
+                    if (connectedNow != connected) {
+
+                        Log.e(TAG, "ConnectionCheck: state changed: "  + connectedNow );
+
+                        if (onConnectionChangedListener != null)
+                            onConnectionChangedListener.onConnectionChanged(connectedNow);
+                    }
+
+                    connected = connectedNow;
 
                 }
             }
         });
         connectionCheckThread.start();
+    }
+
+    private boolean checkReachable() {
+        boolean reachable = false;
+
+        for(int i=4;i>=1;i--){
+            try {
+                reachable = socket.getInetAddress().isReachable(timeout/i);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.e(TAG, "checkReachable: tryout: " + i + " -- " + timeout/i );
+
+            if(reachable || checkHeartBeat(timeout)){
+                break;
+            }
+        }
+
+        return reachable;
+    }
+
+    private void resetConnection() {
+        stop();
+        start(new ConnectionStartListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
+    private boolean checkHeartBeat(int timeout) {
+        return (System.currentTimeMillis() - lastHeartBeatTime) < timeout;
     }
 
     public interface ConnectionStartListener {
@@ -212,17 +235,19 @@ public class TCPClient {
     }
 
     public void start(final ConnectionStartListener connectionStartListener) {
-        if (running|| !alive)
+        if (running || !alive)
             return;
-
+        updateHeartBeat();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 running = true;
                 try {
+                    if (connectionCheckThread == null || !connectionCheckThread.isAlive()) {
+                        startConnectionStatusChecker();
+                    }
                     socket = new Socket(serverIp, serverPort);
                     socket.setReuseAddress(true);
-                    startConnectionStatusChecker();
                     try {
                         bufferIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         bufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
@@ -233,12 +258,15 @@ public class TCPClient {
                             Log.d(TAG, "run: " + message);
                             if (message == null) {
                                 Log.d(TAG, "run: " + "disconnected!!!");
-                                stop();
+                                //stop();
                                 //start();
                             }
-                            if (message != null && messageListener != null) {
+                            if (message != null && message.equals("#H")) {
+                                updateHeartBeat();
+                            } else if (message != null && messageListener != null) {
                                 messageListener.onMessageReceived(message);
                                 //Log.d(TAG, "run: " + message);
+                                updateHeartBeat();
                             }
                             try {
                                 Thread.sleep(50);
@@ -249,17 +277,16 @@ public class TCPClient {
                     } catch (Exception e) {
                         e.printStackTrace();
                         connectionStartListener.onError();
-                    } finally {
-                        stop();
-                        connected = false;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    stop();
-                    connected = false;
                 }
             }
         }).start();
+    }
+
+    private void updateHeartBeat() {
+        lastHeartBeatTime = System.currentTimeMillis();
     }
 
     public void setOnConnectionChangedListener(OnConnectionChangedListener onConnectionChangedListener) {

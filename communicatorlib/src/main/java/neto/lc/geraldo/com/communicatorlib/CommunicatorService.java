@@ -140,6 +140,7 @@ public class CommunicatorService extends Service {
 
             @Override
             public void onDeviceRemoved(Device device) {
+                Log.e(TAG, "onDeviceRemoved: " + device.getName());
                 //device.stop();
             }
 

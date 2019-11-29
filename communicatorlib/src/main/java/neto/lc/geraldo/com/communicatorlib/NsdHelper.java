@@ -93,6 +93,8 @@ public class NsdHelper {
                 // A service was found! Do something with it.
                 Log.d(TAG, "Service discovery success" + service);
                 if (service.getServiceType().contains("things")) {
+                    if(service.getServiceName().contains(Communicator.getInstance(context).getDeviceName()))
+                        return;
                     /*if (service.getServiceName().equals(serviceName))
                         return;//same device*/
                     nsdManager.resolveService(service, new NsdManager.ResolveListener() {

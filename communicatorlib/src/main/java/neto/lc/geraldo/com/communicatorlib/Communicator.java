@@ -56,6 +56,10 @@ public class Communicator {
         this.deviceName = deviceName;
     }
 
+    public String getDeviceName() {
+        return deviceName;
+    }
+
     public void addDeviceListener(DeviceDiscoveryListener listener){
         deviceDiscoveryListeners.add(listener);
         Log.e(TAG, "addDeviceListener: " + deviceDiscoveryListeners.size() );
@@ -109,6 +113,8 @@ public class Communicator {
         nsdHelper.initDeviceDiscovery(new NsdHelper.OnDeviceFoundListener() {
             @Override
             public void onDeviceFound(final Device device) {
+                if(device.getName().equals(deviceName))
+                    return;
                 if (deviceList.contains(device)) {
                     Device prevDevice  = deviceList.get(deviceList.indexOf(device));
                     prevDevice.stop();
@@ -128,6 +134,7 @@ public class Communicator {
                                 listener.onDeviceReconnected(device);
                             else
                                 listener.onDeviceRemoved(device);
+
                         }
                     }
                 });
