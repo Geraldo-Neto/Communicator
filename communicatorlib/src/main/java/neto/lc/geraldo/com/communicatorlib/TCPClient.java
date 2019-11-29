@@ -118,7 +118,7 @@ public class TCPClient {
 
         Log.d(TAG, "stop: ");
         running = false;
-        connected = false;
+        //connected = false;
         if (bufferOut != null) {
             try {
                 bufferOut.flush();
@@ -277,7 +277,7 @@ public class TCPClient {
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
                         connectionStartListener.onError();
                     }
                 } catch (Exception e) {
