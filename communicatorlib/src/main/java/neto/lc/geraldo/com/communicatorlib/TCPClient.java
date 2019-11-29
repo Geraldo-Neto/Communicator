@@ -151,8 +151,10 @@ public class TCPClient {
                         e.printStackTrace();
                         continue;
                     }
-                    if (socket == null)
+                    if (socket == null) {
+                        resetConnection();
                         continue;
+                    }
                     boolean connectedNow;
                     boolean isReachable;
                     connectedNow = checkHeartBeat(timeout);
