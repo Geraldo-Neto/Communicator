@@ -199,6 +199,7 @@ public class TCPClient {
                 reachable = socket.getInetAddress().isReachable(timeout/i);
             } catch (Exception e) {
                 e.printStackTrace();
+                reachable = false;
             }
             Log.e(TAG, "checkReachable: tryout: " + i + " -- " + timeout/i );
 
