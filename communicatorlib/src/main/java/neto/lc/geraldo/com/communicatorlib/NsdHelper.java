@@ -166,6 +166,12 @@ public class NsdHelper {
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }
 
+    public void stopDeviceDiscovery(){
+        if(discoveryListener==null)
+            return;
+        nsdManager.stopServiceDiscovery(discoveryListener);
+    }
+
 
     public int getDeviceTimeout() {
         return deviceTimeout;
@@ -180,10 +186,5 @@ public class NsdHelper {
             nsdManager.unregisterService(registrationListener);
             nsdManager.stopServiceDiscovery(discoveryListener);
         }
-    }
-
-    public void stopDiscovery(){
-        if(discoveryListener!=null)
-            nsdManager.stopServiceDiscovery(discoveryListener);
     }
 }

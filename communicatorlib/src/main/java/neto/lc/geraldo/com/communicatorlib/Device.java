@@ -103,8 +103,7 @@ public class Device {
     }
 
     public void addOnMessageListener(OnMessageListener onMessageListener) {
-        if(!onMessageListeners.contains(onMessageListener))
-            onMessageListeners.add(onMessageListener);
+        onMessageListeners.add(onMessageListener);
     }
 
     public void addOnConnectionChangedListener(OnConnectionChangedListener onConnectionChangedListener) {

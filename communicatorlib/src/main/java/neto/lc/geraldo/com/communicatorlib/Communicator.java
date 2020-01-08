@@ -126,6 +126,7 @@ public class Communicator {
                 }
                 Log.e(TAG, "onDeviceFound: NEW " + device);
                 addDevice(device);
+
                 device.addOnConnectionChangedListener(new OnConnectionChangedListener() {
                     @Override
                     public void onConnectionChanged(boolean connected) {
@@ -134,12 +135,25 @@ public class Communicator {
                                 listener.onDeviceReconnected(device);
                             else
                                 listener.onDeviceRemoved(device);
-
                         }
+                    }
+                });
+
+                device.addOnMessageListener(new OnMessageListener() {
+                    @Override
+                    public void onMessageReceived(String message) {
+                        Log.e(TAG, "onMessageReceived: " + message);
+                        Log.e(TAG, "onMessageReceived: " +
+                                deviceList.size());
+                        addDeviceMessage(new DeviceMessage(device,message));
                     }
                 });
             }
         });
+    }
+
+    public void stopDiscovery(){
+        nsdHelper.stopDeviceDiscovery();
     }
 
     public void startServiceRegister(){
@@ -231,7 +245,6 @@ public class Communicator {
     }
 
     public void deviceReconnected(Device device) {
-
         device.start();
         for(DeviceDiscoveryListener listener:deviceDiscoveryListeners){
             listener.onDeviceReconnected(device);

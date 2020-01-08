@@ -45,7 +45,7 @@ public class EchoThread extends Thread {
                     return;
                 }
 
-
+                Log.e(TAG, "run: " + line );
                 this.messageListener.onClientMessage(line,socket);
             } catch (IOException e) {
                 //e.printStackTrace();
@@ -80,6 +80,5 @@ public class EchoThread extends Thread {
             }
         });
         heartBeatThread.start();
-
     }
 }

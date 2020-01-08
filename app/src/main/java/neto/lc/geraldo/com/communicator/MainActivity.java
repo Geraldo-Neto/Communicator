@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity{
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
         );
+
         Log.e(TAG, "onCreate: ");
 
         final Communicator communicator = Communicator.getInstance(getApplicationContext());
